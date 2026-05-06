@@ -72,21 +72,21 @@ static bool check_coord_array(Grid* grid, Coord c[],int nbCoords){
 
 void grid_setDead(Grid *grid,Coord c){
     if(grid == NULL) return;
-    if(check_coord(grid,c)) return;
+    if(!(check_coord(grid,c))) return;
     grid ->next[c.x][c.y] = 0;
 }
 
 void grid_setAlive(Grid *grid,Coord c){
     if(grid == NULL) return;
-    if(check_coord(grid,c)) return;
+    if(!(check_coord(grid,c))) return;
     grid ->next[c.x][c.y] = 1;
 }
 
 
 void init(Grid* grid,Coord coords[], int nbCoords){
-    if(check_coord_array(grid,coords,nbCoords))
+    if(!(check_coord_array(grid,coords,nbCoords)))
         return;
-    for(int i = 0 ; i< nbCoords - 1 ; i++){
+    for(int i = 0 ; i< nbCoords ; i++){
         grid_setAlive(grid,coords[i]);
     }
 }
