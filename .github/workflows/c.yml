@@ -15,4 +15,4 @@ jobs:
     - name: make test_grid
       run: make test_grid
     - name: Lancer les tests
-      run: ./test_grid
+      run: ./tests/test_grid
