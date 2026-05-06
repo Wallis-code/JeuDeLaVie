@@ -7,6 +7,7 @@ void test_grid_create(){
     assert(g != NULL);
     assert(g ->x == 10);
     assert(g ->y == 10);
+    assert(1 == 2);
     grid_destroy(g);
     printf("OK test_grid_create\n");
 }
