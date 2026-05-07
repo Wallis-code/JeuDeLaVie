@@ -15,10 +15,10 @@ History *history_create(){
 }
 
 static bool isFull(History *h){
-    //le test supérieur à 100 ne sert à rien car normalement 
+    //le test supérieur à 1000 ne sert à rien car normalement 
     //ça ne sera jamais le cas mais au cas ou je vais quand meme le mettre
     if(h->count > MAX){
-        printf("ERREUR - L'historique a trop d'état en mémoire");
+        //printf("ERREUR - L'historique a trop d'état en mémoire");
         return false;
     }
     if(h->count == MAX){
