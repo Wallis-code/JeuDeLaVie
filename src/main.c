@@ -3,9 +3,14 @@
 #include <stdlib.h>
 
 
-int main(int argc, char *argv[]){
-    Grid *grid = grid_create(5,5);
-    grid_print(grid);
+int main(){
+    Grid *grid = grid_create(20,20);
+    Coord coord[5] = {{2,2} , {3,3} , {3,4} , {2,4} , {1,4}};
+    init(grid , coord , 5);
+
+    grid_automatic(grid , 100 , 0.2);
+    
+
     grid_destroy(grid);
 
     return EXIT_SUCCESS;
