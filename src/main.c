@@ -1,17 +1,46 @@
-#include "core/grid.h"
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL2/SDL_image.h>
 
 
 int main(){
-    Grid *grid = grid_create(20,20);
-    Coord coord[5] = {{2,2} , {3,3} , {3,4} , {2,4} , {1,4}};
-    init(grid , coord , 5);
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        fprintf(stderr, "Erreur SDL_Init : %s\n", SDL_GetError());
+        return EXIT_FAILURE;
+    }
 
-    grid_automatic(grid , 100 , 0.2);
+    SDL_Window* win = SDL_CreateWindow("Jeu de la vie", -1, -1, 1300, 900, SDL_WINDOW_SHOWN);
+    if (win == NULL) {
+        fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
+        return EXIT_FAILURE;
+    }
+
+    SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    if (ren == NULL) {
+        fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
     
-
-    grid_destroy(grid);
-
+        
+    SDL_Event e;
+    int running = 1;
+    
+    while (running == 1) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) running = 0;
+            if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = 0;
+        }
+    SDL_RenderClear(ren);
+    SDL_RenderPresent(ren);
+        
+        
+    }
+    
+    SDL_DestroyRenderer(ren);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
     return EXIT_SUCCESS;
 }

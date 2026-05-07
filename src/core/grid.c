@@ -187,3 +187,11 @@ void grid_automatic(Grid *g,int boucle,float clock){
     }
 
 }
+
+void grid_clear(Grid *g){
+    for (int i = 0; i < g->y; i++)
+        for (int j = 0; j < g->x; j++){
+            g->current[i][j] = 0;
+            g->next[i][j] = 0;
+            }
+}
