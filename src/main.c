@@ -1,14 +1,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "core/grid.h"
 #include "UI/render.h"
 
 /*-----------------BOUTON--------------------*/
-typedef enum {PAS, AUTOMATIQUE} Action;
+typedef enum { PAS, AUTOMATIQUE, STOP } Action;
 
 typedef struct {
     SDL_Rect rect;
@@ -40,9 +38,6 @@ void draw_button(SDL_Renderer *r, TTF_Font *font, Button *btn) {
     SDL_DestroyTexture(texture);
 }
 
-
-
-
 int main(void) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "Erreur SDL_Init : %s\n", SDL_GetError());
@@ -67,29 +62,37 @@ int main(void) {
     }
 
     /*---------------DESSIN DES BOUTONS------------------*/
-    //ils seront connectés aux algo après
-
+    // ils seront connectés aux algo après
     TTF_Init();
     TTF_Font *font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20);
+    if (font == NULL) {
+        fprintf(stderr, "TTF_OpenFont Error: %s\n", TTF_GetError());
+        SDL_DestroyRenderer(ren);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
     Button buttons[] = {
-        { {1300, 50,  200, 100}, " UN PAS" , PAS},
-        { {1550, 50,  200, 100}, "AUTOMATIQUE" , AUTOMATIQUE}
+        { {1300, 50,  200, 100}, "UN PAS",      PAS        },
+        { {1550, 50,  200, 100}, "AUTOMATIQUE", AUTOMATIQUE},
+        { {1300, 50,  250, 100}, "STOP",        STOP}
+
     };
     int nbButton = sizeof(buttons) / sizeof(buttons[0]);
-    
 
     /*-----------------GRILLE---------------------------*/
     Grid *g = grid_create(50, 50);
-    Coord coord[5] = {{2,2} , {3,3} , {3,4} , {2,4} , {1,4}};
-    init(g , coord , 5);
-    
+    Coord coord[5] = {{2,2}, {3,3}, {3,4}, {2,4}, {1,4}};
+    init(g, coord, 5);
 
     int auto_mode = 0;
     SDL_Event e;
     int running = 1;
+
     while (running) {
+        /* --------------LA GESTION DES TOUCHES ------------------------*/
         while (SDL_PollEvent(&e)) {
-            /* --------------LA GESTION DES TOUCHES ------------------------*/
             if (e.type == SDL_QUIT) running = 0;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = 0;
             // S — avancer d'un step
@@ -101,35 +104,38 @@ int main(void) {
             // L — stopper le mode auto
             if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_L)
                 auto_mode = 0;
-        }
-        /* --------------LA GESTION DES BOUTONS ------------------------*/
-        SDL_Point p = { e.button.x, e.button.y };
-        if (e.type == SDL_MOUSEBUTTONDOWN){
-            for(int i = 0 ; i<nbButton ; i++){
-                if(SDL_PointInRect(&p , &buttons[i].rect)){
-                    if((buttons[i].action) == PAS)
-                        grid_step(g);
+            /* --------------LA GESTION DES BOUTONS ------------------------*/
+            if (e.type == SDL_MOUSEBUTTONDOWN) {
+                SDL_Point p = { e.button.x, e.button.y };
+                for (int i = 0; i < nbButton; i++) {
+                    if (SDL_PointInRect(&p, &buttons[i].rect)) {
+                        if (buttons[i].action == PAS)
+                            grid_step(g);
+                        if (buttons[i].action == AUTOMATIQUE) 
+                            auto_mode = 1;
+                    }
                 }
             }
         }
-        
 
-
+        /*----------------PLUS DANS LA BOUCLE PRINCIPALE-----------*/
         if (auto_mode == 1) {
             grid_step(g);
             SDL_Delay(100);
         }
+
+        // rendu
         SDL_SetRenderDrawColor(ren, 20, 30, 60, 255);
         SDL_RenderClear(ren);
         SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
         SDL_RenderDrawLine(ren, 1250, 0, 1250, 1300);
         render_grid(ren, g);
-
-
-        /*-----------------------------------------------------------------*/
-
+        for (int i = 0; i < nbButton; i++)
+            draw_button(ren, font, &buttons[i]);
+        SDL_RenderPresent(ren);
     }
 
+    // désallocation
     TTF_CloseFont(font);
     TTF_Quit();
     grid_destroy(g);
