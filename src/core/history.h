@@ -2,7 +2,7 @@
 #define HISTORY_H
 
 //max arbitraire
-#define MAX 1000 
+#define MAX 10000 
 
 #include"grid.h"
 
@@ -17,6 +17,8 @@ typedef struct{
 
 History *history_create();
 void history_push(History *h, Grid *g);
+void history_back(History *h, Grid *g);
+void history_destroy(History *h);
 
 
 #endif

@@ -113,6 +113,27 @@ void init(Grid* grid,Coord coords[], int nbCoords){
     grid_next(grid);
 }
 
+void grid_setDeadCurrent(Grid *grid,Coord c){
+    if(grid == NULL) return;
+    if(!(check_coord(grid,c))) return;
+    grid ->current[c.y][c.x] = DEAD;
+}
+
+void grid_setAliveCurrent(Grid *grid,Coord c){
+    if(grid == NULL) return;
+    if(!(check_coord(grid,c))) return;
+    grid ->current[c.y][c.x] = ALIVE;
+}
+
+void grid_reset(Grid *grid){
+    for(int i = 0 ; i < grid_getX(grid) ; i++){
+        for(int j = 0 ; j < grid_getY(grid) ; j++){
+            grid->current[i][j] = 0 ;
+            grid->next[i][j] = 0 ;
+        }
+    }
+}
+
 /*---------------
 ---------------------TOUT CE QUI CONCERNE L'ETAPE SUIVANTE
 ---------------*/
@@ -167,6 +188,7 @@ void grid_step(Grid *g){
                 }
         }
     }
+    
     grid_next(g);
 }
 

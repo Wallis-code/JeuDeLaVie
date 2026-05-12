@@ -13,6 +13,9 @@
 void render_grid(SDL_Renderer *r, Grid *g);
 void render_step(Grid *g);
 void render_automatic(Grid *g,Uint32 ms);
+void render_editGrid(SDL_Renderer *r, Grid *g , SDL_Event *e);
+void render_editGridButton(SDL_Renderer *r, Grid *g , SDL_Event *e);
+
 
 
 #endif

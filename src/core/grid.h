@@ -49,7 +49,12 @@ void grid_next(Grid *grid);
 void init(Grid* grid,Coord coords[], int nbCoords);
 void grid_step(Grid *g);
 void grid_automatic(Grid *g,int boucle,float clock);
-void grid_clear(Grid *g);;
+void grid_clear(Grid *g);
+void grid_setDeadCurrent(Grid *grid,Coord c);
+void grid_setAliveCurrent(Grid *grid,Coord c);
+void grid_reset(Grid *grid);
+
+
 
 
 

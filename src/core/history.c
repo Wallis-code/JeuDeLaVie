@@ -14,6 +14,7 @@ History *history_create(){
     return h;
 }
 
+/*
 static bool isFull(History *h){
     //le test supérieur à 1000 ne sert à rien car normalement 
     //ça ne sera jamais le cas mais au cas ou je vais quand meme le mettre
@@ -26,16 +27,43 @@ static bool isFull(History *h){
     }
     return true;
 }
+    */
+
+int history_getCount(History *h){return (h->count);}
 
 void history_push(History *h, Grid *g){
     //on va reconstruire la grille, 
     //c'est vrm une photo d'une moment de la grille
+    //fprintf(stdout, "débug push\n");
     Grid *screen = grid_create(grid_getX(g) , grid_getY(g));
     for(int x = 0 ; x < grid_getY(screen) ; x++){
         for(int y = 0 ; y < grid_getX(screen) ; y++){
             screen->current[x][y] = g -> current[x][y];
         }
     }
-    int nb = h->count;
-    h->state[nb];
+    h->state[history_getCount(h)] = screen;
+    h->count++;
 }
+
+void history_back(History *h, Grid *g) {
+    //fprintf(stdout, "débug back\n");
+    if (h->count <= 0){
+        return;}
+    //fprintf(stdout, "débug back APRES le test\n");
+    h->count--;
+    Grid *screen = h->state[h->count];
+    for (int i = 0; i < g->y; i++)
+        for (int j = 0; j < g->x; j++){
+            g->current[i][j] = screen->current[i][j];
+            g->next[i][j] = screen ->current[i][j];
+        }
+    }
+
+void history_destroy(History *h) {
+    if (h == NULL) return;
+    for (int i = 0; i < h->count; i++)
+        grid_destroy(h->state[i]);
+    free(h->state);
+    free(h);
+}
+

@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "core/grid.h"
+#include "core/history.h"
 #include "UI/render.h"
 
 /*-----------------BOUTON--------------------*/
-typedef enum { PAS, AUTOMATIQUE, STOP } Action;
+typedef enum { PAS, AUTOMATIQUE, STOP, BACK, RESET } Action;
 
 typedef struct {
     SDL_Rect rect;
@@ -38,7 +39,7 @@ void draw_button(SDL_Renderer *r, TTF_Font *font, Button *btn) {
     SDL_DestroyTexture(texture);
 }
 
-int main(void) {
+int main() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "Erreur SDL_Init : %s\n", SDL_GetError());
         return EXIT_FAILURE;
@@ -76,7 +77,10 @@ int main(void) {
     Button buttons[] = {
         { {1300, 50,  200, 100}, "UN PAS",      PAS        },
         { {1550, 50,  200, 100}, "AUTOMATIQUE", AUTOMATIQUE},
-        { {1300, 50,  250, 100}, "STOP",        STOP}
+        { {1300, 200, 200, 100}, "STOP",        STOP},
+        { {1550, 200, 200, 100}, "ARRIERE",     BACK},
+        { {1300, 350, 200, 100}, "RESET",       RESET},
+
 
     };
     int nbButton = sizeof(buttons) / sizeof(buttons[0]);
@@ -85,34 +89,52 @@ int main(void) {
     Grid *g = grid_create(50, 50);
     Coord coord[5] = {{2,2}, {3,3}, {3,4}, {2,4}, {1,4}};
     init(g, coord, 5);
+    History *h = history_create();
 
     int auto_mode = 0;
+    int mouse_pressed = 0;
     SDL_Event e;
     int running = 1;
 
     while (running) {
         /* --------------LA GESTION DES TOUCHES ------------------------*/
         while (SDL_PollEvent(&e)) {
+            //edition
+            render_editGrid(ren, g, &e);
+            
             if (e.type == SDL_QUIT) running = 0;
             if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) running = 0;
             // S — avancer d'un step
-            if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_S)
+            if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_S){
+                history_push(h , g);
                 grid_step(g);
+                }
             // Q — lancer le mode auto
             if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_Q)
                 auto_mode = 1;
             // L — stopper le mode auto
             if (e.type == SDL_KEYDOWN && e.key.keysym.scancode == SDL_SCANCODE_L)
                 auto_mode = 0;
+            if (e.type == SDL_MOUSEBUTTONDOWN && e.button.button == SDL_BUTTON_RIGHT){
+                if(mouse_pressed){mouse_pressed = 1;}else{mouse_pressed = 0;}
+                }
             /* --------------LA GESTION DES BOUTONS ------------------------*/
             if (e.type == SDL_MOUSEBUTTONDOWN) {
                 SDL_Point p = { e.button.x, e.button.y };
                 for (int i = 0; i < nbButton; i++) {
                     if (SDL_PointInRect(&p, &buttons[i].rect)) {
-                        if (buttons[i].action == PAS)
+                        if (buttons[i].action == PAS){
+                            history_push(h , g);
                             grid_step(g);
+                            }
                         if (buttons[i].action == AUTOMATIQUE) 
                             auto_mode = 1;
+                        if (buttons[i].action == STOP) 
+                            auto_mode = 0;
+                        if (buttons[i].action == RESET) 
+                            grid_reset(g);
+                        if (buttons[i].action == BACK) 
+                            history_back(h , g);
                     }
                 }
             }
@@ -120,9 +142,15 @@ int main(void) {
 
         /*----------------PLUS DANS LA BOUCLE PRINCIPALE-----------*/
         if (auto_mode == 1) {
+            history_push(h , g);
             grid_step(g);
             SDL_Delay(100);
         }
+        if (mouse_pressed) {
+            int mx, my;
+            SDL_GetMouseState(&mx, &my);
+            render_editGridButton(ren, g,&e);
+            }
 
         // rendu
         SDL_SetRenderDrawColor(ren, 20, 30, 60, 255);
@@ -139,6 +167,7 @@ int main(void) {
     TTF_CloseFont(font);
     TTF_Quit();
     grid_destroy(g);
+    history_destroy(h);
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
