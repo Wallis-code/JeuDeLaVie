@@ -6,16 +6,8 @@
 #include <stdlib.h>
 #include "core/grid.h"
 
-#define CELL_DIMENSION 20
-#define CELL_SEPARATOR 5
-#define GRID_DIMENSION 700
-
-void render_grid(SDL_Renderer *r, Grid *g);
+void render_grid(SDL_Renderer *r, Grid *g, int cam_x, int cam_y, int cell_size);
 void render_step(Grid *g);
 void render_automatic(Grid *g,Uint32 ms);
-void render_editGrid(SDL_Renderer *r, Grid *g , SDL_Event *e);
-void render_editGridButton(SDL_Renderer *r, Grid *g , SDL_Event *e);
-
-
-
+void render_editGrid(SDL_Renderer *r, Grid *g, int mx, int my,int cam_x, int cam_y, int cell_size);
 #endif
