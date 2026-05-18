@@ -34,7 +34,7 @@ int history_getCount(History *h){return (h->count);}
 void history_push(History *h, Grid *g){
     //on va reconstruire la grille, 
     //c'est vrm une photo d'une moment de la grille
-    //fprintf(stdout, "débug push\n");
+    fprintf(stdout, "débug push\n");
     Grid *screen = grid_create(grid_getX(g) , grid_getY(g));
     if(!isFull(h)){
         for(int x = 0 ; x < grid_getY(screen) ; x++){
@@ -44,20 +44,15 @@ void history_push(History *h, Grid *g){
         }
         h->state[history_getCount(h)] = screen;
         h->count++;
-    }else{
-        //on se libère une place
-        free(h->state[0]);
-        for(int i = 1 ; i < MAX ; i++){
+    } else {
+        grid_destroy(h->state[0]);  
+        for (int i = 1; i < MAX; i++)
             h->state[i-1] = h->state[i];
-        }
-
-        for(int x = 0 ; x < grid_getY(screen) ; x++){
-            for(int y = 0 ; y < grid_getX(screen) ; y++){
-                screen->current[x][y] = g -> current[x][y];
-            }
-        }
-        h->state[history_getCount(h)] = screen;
-    }
+        for (int x = 0; x < grid_getY(screen); x++)
+            for (int y = 0; y < grid_getX(screen); y++)
+                screen->current[x][y] = g->current[x][y];
+        h->state[MAX - 1] = screen;
+   }
 }
 
 void history_back(History *h, Grid *g) {
