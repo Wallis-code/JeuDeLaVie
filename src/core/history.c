@@ -14,20 +14,20 @@ History *history_create(){
     return h;
 }
 
-/*
+
 static bool isFull(History *h){
-    //le test supérieur à 1000 ne sert à rien car normalement 
+    //le test supérieur à 100 ne sert à rien car normalement 
     //ça ne sera jamais le cas mais au cas ou je vais quand meme le mettre
     if(h->count > MAX){
-        //printf("ERREUR - L'historique a trop d'état en mémoire");
-        return false;
+        fprintf(stdout,"ERREUR - L'historique a trop d'état en mémoire");
+        return true;
     }
     if(h->count == MAX){
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
-    */
+
 
 int history_getCount(History *h){return (h->count);}
 
@@ -36,13 +36,27 @@ void history_push(History *h, Grid *g){
     //c'est vrm une photo d'une moment de la grille
     //fprintf(stdout, "débug push\n");
     Grid *screen = grid_create(grid_getX(g) , grid_getY(g));
-    for(int x = 0 ; x < grid_getY(screen) ; x++){
-        for(int y = 0 ; y < grid_getX(screen) ; y++){
-            screen->current[x][y] = g -> current[x][y];
+    if(!isFull(h)){
+        for(int x = 0 ; x < grid_getY(screen) ; x++){
+            for(int y = 0 ; y < grid_getX(screen) ; y++){
+                screen->current[x][y] = g -> current[x][y];
+            }
         }
+        h->state[history_getCount(h)] = screen;
+        h->count++;
+    }else{
+        //on se libère une place
+        for(int i = 1 ; i < MAX ; i++){
+            h->state[i-1] = h->state[i];
+        }
+
+        for(int x = 0 ; x < grid_getY(screen) ; x++){
+            for(int y = 0 ; y < grid_getX(screen) ; y++){
+                screen->current[x][y] = g -> current[x][y];
+            }
+        }
+        h->state[history_getCount(h)] = screen;
     }
-    h->state[history_getCount(h)] = screen;
-    h->count++;
 }
 
 void history_back(History *h, Grid *g) {

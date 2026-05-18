@@ -2,7 +2,7 @@
 #define HISTORY_H
 
 //max arbitraire
-#define MAX 10000 
+#define MAX 100 
 
 #include"grid.h"
 
