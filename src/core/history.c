@@ -46,6 +46,7 @@ void history_push(History *h, Grid *g){
         h->count++;
     }else{
         //on se libère une place
+        free(h->state[0]);
         for(int i = 1 ; i < MAX ; i++){
             h->state[i-1] = h->state[i];
         }
