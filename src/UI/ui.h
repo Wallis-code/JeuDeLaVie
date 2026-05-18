@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-typedef enum { PAS, AUTOMATIQUE, STOP, BACK, RESET, PERDU } Action;
+typedef enum { PAS, AUTOMATIQUE, STOP, BACK, RESET, PERDU, RANDOM } Action;
 
 typedef struct {
     SDL_Rect rect;

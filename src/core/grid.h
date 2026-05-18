@@ -53,6 +53,7 @@ void grid_clear(Grid *g);
 void grid_setDeadCurrent(Grid *grid,Coord c);
 void grid_setAliveCurrent(Grid *grid,Coord c);
 void grid_reset(Grid *grid);
+void grid_alea(Grid *grid);
 
 
 

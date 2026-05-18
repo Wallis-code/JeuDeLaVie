@@ -21,6 +21,9 @@ core: src/core/grid.c src/core/main.c
 test_grid: src/core/grid.c tests/test_grid.c
 	$(CC) -Wall -std=c99 -I src -o tests/test_grid src/core/grid.c tests/test_grid.c
 
+analyse: src/core/grid.c src/core/analyse.c src/core/analyse_main.c
+	$(CC) -Wall -std=c99 -I src -o executable/JDLV_analyse \
+	src/core/grid.c src/core/analyse.c src/core/analyse_main.c
 clean:
 	rm -rf $(BUILD)
 	rm -f executable/JDLV executable/JDLV_terminal tests/test_grid

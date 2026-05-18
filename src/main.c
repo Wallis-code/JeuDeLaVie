@@ -53,6 +53,8 @@ int main() {
         { {1550, 200, 200, 100}, "ARRIERE",     BACK       },
         { {1300, 350, 200, 100}, "RESET",       RESET      },
         { {1150, 25,  75,   50}, "PERDU",       PERDU      },
+        { {1550, 350, 200, 100}, "ALEATOIRE",   RANDOM     },
+
     };
     int nbButton = sizeof(buttons) / sizeof(buttons[0]);
 
@@ -142,6 +144,8 @@ int main() {
                         if (buttons[i].action == RESET)       grid_reset(g);
                         if (buttons[i].action == BACK)        history_back(h, g);
                         if (buttons[i].action == PERDU)       input_return(&in);
+                        if (buttons[i].action == RANDOM)      grid_alea(g);
+
                     }
                 }
             }

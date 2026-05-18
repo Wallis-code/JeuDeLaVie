@@ -217,3 +217,10 @@ void grid_clear(Grid *g){
             g->next[i][j] = 0;
             }
 }
+
+void grid_alea(Grid *grid) {
+    srand(time(NULL));
+    for (int i = 0; i < grid->y; i++)
+        for (int j = 0; j < grid->x; j++)
+            grid->current[i][j] = (rand() % 2 == 0) ? ALIVE : DEAD;
+}

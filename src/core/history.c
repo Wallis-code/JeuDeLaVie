@@ -34,7 +34,7 @@ int history_getCount(History *h){return (h->count);}
 void history_push(History *h, Grid *g){
     //on va reconstruire la grille, 
     //c'est vrm une photo d'une moment de la grille
-    fprintf(stdout, "débug push\n");
+    //fprintf(stdout, "débug push\n");
     Grid *screen = grid_create(grid_getX(g) , grid_getY(g));
     if(!isFull(h)){
         for(int x = 0 ; x < grid_getY(screen) ; x++){
