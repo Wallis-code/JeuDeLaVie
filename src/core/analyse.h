@@ -1,0 +1,20 @@
+#ifndef ANALYSE_H
+#define ANALYSE_H
+
+#include "grid.h"
+#include <stdio.h>
+
+// une ligne du CSV
+typedef struct {
+    float density;
+    int generation;
+    int population;
+} DataPoint;
+
+// lance une simulation complète et écrit dans le fichier CSV
+void analyse_run(FILE *f, float density, int max_gen, int grid_size,int nb_runs);
+
+// lance toutes les simulations pour toutes les densités
+void analyse_run_all(const char *filename, int max_gen, int grid_size, int nb_runs);
+
+#endif

@@ -224,3 +224,10 @@ void grid_alea(Grid *grid) {
         for (int j = 0; j < grid->x; j++)
             grid->current[i][j] = (rand() % 2 == 0) ? ALIVE : DEAD;
 }
+
+void grid_alea_density(Grid *grid, float density) {
+    srand(time(NULL));
+    for (int i = 0; i < grid->y; i++)
+        for (int j = 0; j < grid->x; j++)
+            grid->current[i][j] = ((float)rand() / RAND_MAX < density) ? ALIVE : DEAD;
+}

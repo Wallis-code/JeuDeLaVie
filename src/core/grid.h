@@ -54,6 +54,7 @@ void grid_setDeadCurrent(Grid *grid,Coord c);
 void grid_setAliveCurrent(Grid *grid,Coord c);
 void grid_reset(Grid *grid);
 void grid_alea(Grid *grid);
+void grid_alea_density(Grid *g , float density);
 
 
 
