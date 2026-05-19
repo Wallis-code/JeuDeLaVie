@@ -6,6 +6,6 @@ int main(void) {
     // grille 100*100
     //je laisse 500 generations pour se stabilisé,
     //c'est arbitraire, dans mes tests précédents, ça dépassait pas 450
-    analyse_run_all("simulation.csv", 500, 100, 100);
+    analyse_run_all("simulation.csv", 500, 250, 100);
     return EXIT_SUCCESS;
 }
