@@ -102,5 +102,5 @@ int main() {
     test_wator_cell_create_shark();
     test_wator_cell_create_no();
     printf("Tous les tests passent\n");
-    return 1;
+    return 0;
 }
