@@ -57,7 +57,7 @@ int main() {
     int nbButton = sizeof(buttons) / sizeof(buttons[0]);
 
     /*-----------------GRILLE WATOR---------------------------*/
-    WatorGrid *wg = wator_create(50);
+    WatorGrid *wg = wator_create(500);
     // initialisation avec 2 poissons, qui vont se reproduire en balle
     //et 2 requins, on va prier pour que les requins tombent sur les poissons
     Coord fish1 = {10, 10};
@@ -70,7 +70,7 @@ int main() {
     wator_setShark(wg, shark1);
     wator_setShark(wg, shark2);
     wator_setShark(wg, (Coord) {22, 20});
-    wator_next(wg);
+    //wator_step(wg);
 
     /*-----------------INPUT---------------------------*/
     Input in;
@@ -106,15 +106,15 @@ int main() {
                         if (buttons[i].action == PERDU)       input_return(&in);
                         if (buttons[i].action == RANDOM) {
                             wator_reset(wg);
-                            for (int ii = 0; ii < 500; ii++) {
-                                for (int jj = 0; jj < 500; jj++) {
+                            for (int ii = 0; ii < wg->size; ii++) {
+                                for (int jj = 0; jj < wg->size; jj++) {
                                     int r = rand() % 10;
                                     Coord c = {jj, ii};
                                     if (r == 0)      wator_setShark(wg, c);
                                     else if (r <= 3) wator_setFish(wg, c);
                                 }
                             }
-                            wator_next(wg);
+                            wator_step(wg);
                         }
                     }
                 }

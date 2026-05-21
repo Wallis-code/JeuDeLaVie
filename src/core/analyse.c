@@ -1,6 +1,8 @@
 #define _POSIX_C_SOURCE 199309L
 #include "analyse.h"
 #include "grid.h"
+#include "wator/wator.h"
+#include "coord.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -22,7 +24,7 @@ static int analyse_count_alive(Grid *g) {
 void analyse_run(FILE *f, float density, int max_gen, int grid_size, int nb_runs) {
     // tableau pour accumuler la somme des populations
     //calloc initialise directement à 0, c'est + pratique
-    int *sum_pop = calloc(max_gen, sizeof(long));
+    int *sum_pop = calloc(max_gen, sizeof(int));
 
     //on va répéter plusieurs fois la simulation (par densité), pour avoir des données exploitables
     //et pas juste "un coup de chance"
@@ -73,3 +75,75 @@ void analyse_run_all(const char *filename, int max_gen, int grid_size, int nb_ru
     fclose(f);
     printf("tout roule\n");
 }
+
+
+
+
+/*
+######################################################################
+##############################   ANALYSE WATOR   ######################
+#######################################################################
+*/
+
+static void wator_alea(WatorGrid *wg) {
+    for (int i = 0; i < wg->size; i++) {
+        for (int j = 0; j < wg->size; j++) {
+            int r = rand() % 10;
+            Coord c = {j, i};
+            if (r == 0) wator_setShark(wg, c);
+            else if (r <= 3) wator_setFish(wg, c);
+        }
+    }
+}
+
+static void analyse_wator_count(WatorGrid *wg,int *shark, int *fish){
+    *shark = 0;
+    *fish = 0;
+    for(int i = 0 ; i< wg->size ; i++){
+        for(int j = 0 ; j<wg->size ; j++){
+            Coord c = { i , j};
+            if(wator_getCellType(wg , c) == FISH)  (*fish)++;
+            if(wator_getCellType(wg , c) == SHARK) (*shark)++;
+        }
+    }
+
+}
+
+void analyse_wator_run(const char *filename, int max_gen, int grid_size, int nb_runs) {
+    FILE *f = fopen(filename, "w");
+    if (f == NULL) { 
+        fprintf(stderr, "Erreur ouverture %s\n", filename); 
+        return; 
+    }
+    fprintf(f, "generation,fish,shark\n");
+    
+    // tableau pour accumuler la somme des populations
+    //calloc initialise directement à 0, c'est + pratique
+    int *sum_fish = calloc(max_gen, sizeof(int));
+    int *sum_shark = calloc(max_gen, sizeof(int));
+
+    //on va répéter plusieurs fois la simulation, pour avoir des données exploitables
+    //et pas juste "un coup de chance"
+    for (int run = 0; run < nb_runs; run++) {
+        WatorGrid *wg = wator_create(grid_size);
+        wator_alea(wg);
+
+        for (int gen = 0; gen < max_gen; gen++) {
+            analyse_wator_count(wg,&sum_shark[gen] , &sum_fish[gen]);
+            wator_step(wg);
+        }
+
+        wator_destroy(wg);
+        printf("run %d/%d\n", run + 1, nb_runs);
+    }
+
+    //une fois le tableau plein, on remplit le csv
+    //on evite de faire trop d'ouverture
+    for (int gen = 0; gen < max_gen; gen++)
+        fprintf(f, "%d,%d,%d\n", gen, sum_fish[gen] / nb_runs , sum_shark[gen] / nb_runs);
+
+    free(sum_shark);
+    free(sum_fish);
+    fclose(f);
+}
+

@@ -13,27 +13,19 @@ de beltoforion
 
 
 /*
-je vais devoir refaire tout
-ça va faire de la redondance de code,
-mais tout caster en void* c'est atrocement long
-*/
-
-
-/*
 * Au bout de combien de temps un poisson
 * se reproduit
 */
 #define F_BREED 3
 //idem pour le requin
-#define S_BREED 10
+#define S_BREED 100
 
 /*
 * La faim de base d'un requin
 * décrémente s'il mange pas
 * si 0 alors meurt
 */
-#define STARVE 10
-// 
+#define STARVE 50
 
 
 typedef enum { FISH , SHARK , NO} CellType;
@@ -54,7 +46,6 @@ typedef struct {
 typedef struct {
     int size;
     Cell **current;
-    Cell **next;
 }WatorGrid;
 
 

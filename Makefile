@@ -30,9 +30,15 @@ test_grid: src/core/grid.c tests/test_grid.c
 	$(CC) -Wall -std=c99 -I src -o tests/test_grid \
 	src/core/grid.c tests/test_grid.c
 
-analyse: src/core/grid.c src/core/analyse.c src/core/analyse_main.c
+test_wator: src/core/wator/wator.c src/core/coord.c tests/test_wator.c
+	$(CC) -Wall -std=c99 -I src -o tests/test_wator \
+	src/core/wator/wator.c src/core/coord.c tests/test_wator.c
+
+analyse: src/core/grid.c src/core/analyse.c src/core/analyse_main.c \
+         src/core/wator/wator.c src/core/coord.c
 	$(CC) -Wall -std=c99 -I src -o executable/JDLV_analyse \
-	src/core/grid.c src/core/analyse.c src/core/analyse_main.c
+	src/core/grid.c src/core/analyse.c src/core/analyse_main.c \
+	src/core/wator/wator.c src/core/coord.c
 
 clean:
 	rm -rf $(BUILD)

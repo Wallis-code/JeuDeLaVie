@@ -36,14 +36,11 @@ WatorGrid *wator_create(int size)
 
     wg->size = size;
     wg->current = malloc(size * sizeof(Cell *));
-    wg->next    = malloc(size * sizeof(Cell *));
 
     for (int i = 0; i < size; i++) {
         wg->current[i] = malloc(size * sizeof(Cell));
-        wg->next[i]    = malloc(size * sizeof(Cell));
         for (int j = 0; j < size; j++) {
             wg->current[i][j] = cell_create(NO);
-            wg->next[i][j]    = cell_create(NO);
         }
     }
 
@@ -53,10 +50,8 @@ WatorGrid *wator_create(int size)
 void wator_destroy(WatorGrid *wg){
     for(int i = 0 ; i < wg->size ; i++){
             free(wg->current[i]);
-            free(wg->next[i]);
     }
     free(wg->current);
-    free(wg->next);
     free(wg);
 }
 
@@ -71,19 +66,19 @@ static bool check_coord(WatorGrid* wg, Coord c){
 void wator_setDead(WatorGrid *wg, Coord c){
     if(wg == NULL) return;
     if(!(check_coord(wg,c))) return;
-    wg ->next[c.y][c.x] = cell_create(NO);
+    wg ->current[c.y][c.x] = cell_create(NO);
 }
 
 void wator_setFish(WatorGrid *wg, Coord c){
     if(wg == NULL) return;
     if(!(check_coord(wg,c))) return;
-    wg ->next[c.y][c.x] = cell_create(FISH);
+    wg ->current[c.y][c.x] = cell_create(FISH);
 }
 
 void wator_setShark(WatorGrid *wg, Coord c){
     if(wg == NULL) return;
     if(!(check_coord(wg,c))) return;
-    wg ->next[c.y][c.x] = cell_create(SHARK);
+    wg ->current[c.y][c.x] = cell_create(SHARK);
 }
 
 Cell wator_getCell(WatorGrid *wg, Coord c){
@@ -97,18 +92,10 @@ CellType wator_getCellType(WatorGrid *wg , Coord c){
     return cell.type;
 }
 
-void wator_next(WatorGrid *wg){
-    if(wg == NULL) return;
-    Cell **tmp = wg ->current;
-    wg->current = wg-> next;
-    wg->next = tmp;
-}
-
 void wator_reset(WatorGrid *wg){
     for(int i = 0 ; i < wg->size ; i++){
         for(int j = 0 ; j < wg->size ; j++){
             wg->current[i][j] = cell_create(NO);
-            wg->next[i][j] = cell_create(NO) ;
         }
     }
 }
@@ -126,120 +113,119 @@ void wator_reset(WatorGrid *wg){
 
 */
 
-//coordonées autour
-//je regarde les cases next car il est possible qu'a la
-//génération suivante, un poisson ait des enfant ou
-//se soit déplacé(tres probable en fait)
-//ATTENTION : ça renvoie les 4 positions alentours, pas de tests ici
-static Coord* allow(WatorGrid *wg, Coord c){
-    if(!(check_coord(wg, c))) return NULL;
-    
-    //les 4 coordonées qui l'entourent, on va les passer modulo 3
-    //parceque c'est une planête torroidale
-    //les variables sont en français parceque c'est compliqué là
-    Coord* tabCoo = malloc(sizeof(Coord) * 4);
-    Coord haut,bas,gauche,droite;
-    int size = wg->size;
-    haut   = (Coord){coord_getX(c), (coord_getY(c) - 1 + size) % size};
-    bas    = (Coord){coord_getX(c),  (coord_getY(c) + 1) % size};
-    gauche = (Coord){(coord_getX(c) - 1 + size) % size, coord_getY(c)};
-    droite = (Coord){(coord_getX(c) + 1) % size, coord_getY(c)};
 
-    tabCoo[0] = haut;
-    tabCoo[1] = bas;
-    tabCoo[2] = gauche;
-    tabCoo[3] = droite;
+/*
+Algo adapté et "copié" d'un dépôt github en c++ , ligne 639
+https://github.com/beltoforion/Wator-Screensaver/blob/master/WatorWnd.cpp
 
-    return tabCoo;
-}
-
-static CellType get_next_type(WatorGrid *wg, Coord c) {
-    if (!check_coord(wg, c)) return NO;
-    return wg->next[c.y][c.x].type;
-}
+*/
 
 void wator_step(WatorGrid *wg) {
     if (wg == NULL) return;
 
-    for (int i = 0; i < wg->size; i++)
-        for (int j = 0; j < wg->size; j++)
-            wg->next[i][j] = cell_create(NO);
+    int size = wg->size;
+    int *moved = calloc(size * size, sizeof(int));
 
-    int *moved = calloc(wg->size * wg->size, sizeof(int));
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (moved[i * size + j]) continue;
 
-    for (int i = 0; i < wg->size; i++) {
-        for (int j = 0; j < wg->size; j++) {
-            if (moved[i * wg->size + j]) continue;
+            Coord dirs[4] = {{0,-1},{0,1},{-1,0},{1,0}};
+            int start = rand() % 4;
 
-            Coord tmp = {j, i};
-            CellType type = wator_getCellType(wg, tmp);
-            if (type == NO) continue;
-
-            Coord *libre = allow(wg, tmp);
-            if (libre == NULL) continue;
-
-            if (type == FISH) {
-                Cell fish = wator_getCell(wg, tmp);
-                fish.age++;
-
-                // cherche une case vide
-                Coord step = {-1, -1};
-                for (int k = 0; k < 4; k++)
-                    if (get_next_type(wg, libre[k]) == NO) { step = libre[k]; break; }
-
-                if (step.x == -1) {
-                    wg->next[tmp.y][tmp.x] = fish;
-                } else {
-                    if (fish.age >= F_BREED) {
-                        wg->next[tmp.y][tmp.x] = cell_create(FISH); // bébé
-                        fish.age = 0;
-                    }
-                    wg->next[step.y][step.x] = fish;
-                    moved[step.y * wg->size + step.x] = 1;
-                }
-            }
-
-            else if (type == SHARK) {
-                Cell shark = wator_getCell(wg, tmp);
+            /*----- CAS SHARK-----*/
+            if (wg->current[i][j].type == SHARK) {
+                Cell shark = wg->current[i][j];
                 shark.age++;
                 shark.hunger--;
 
-                if (shark.hunger <= 0) { free(libre); continue; } // meurt
-
-                // cherche poisson dans current
-                Coord step = {-1, -1};
-                for (int k = 0; k < 4; k++)
-                    if (wator_getCellType(wg, libre[k]) == FISH) { step = libre[k]; break; }
-
-                int reproduced = 0;
-                if (step.x != -1) {
-                    shark.hunger = STARVE; // mange
-                } else {
-                    // cherche case vide dans next
-                    for (int k = 0; k < 4; k++)
-                        if (get_next_type(wg, libre[k]) == NO) { step = libre[k]; break; }
+                if (shark.hunger <= 0) {
+                    wg->current[i][j] = cell_create(NO);
+                    continue;
                 }
+
+                Coord new_co = {-1, -1};
+                int ate = 0;
+
+                for (int k = 0; k < 4; k++) {
+                    int d = (start + k) % 4;
+                    Coord voisin = {
+                        (j + dirs[d].x + size) % size,
+                        (i + dirs[d].y + size) % size
+                    };
+                    if (wg->current[voisin.y][voisin.x].type == FISH) {
+                        new_co = voisin;
+                        ate = 1;
+                        break;
+                    }
+                }
+
+                if (new_co.x == -1) {
+                    for (int k = 0; k < 4; k++) {
+                        int d = (start + k) % 4;
+                        Coord voisin = {
+                            (j + dirs[d].x + size) % size,
+                            (i + dirs[d].y + size) % size
+                        };
+                        if (wg->current[voisin.y][voisin.x].type == NO) {
+                            new_co = voisin;
+                            break;
+                        }
+                    }
+                }
+
+                if (ate) shark.hunger = STARVE;
 
                 if (shark.age >= S_BREED) {
-                    wg->next[tmp.y][tmp.x] = cell_create(SHARK); // bébé
+                    wg->current[i][j] = cell_create(SHARK);
                     shark.age = 0;
-                    reproduced = 1;
+                    //on marque la case du bébé requin
+                    moved[i * size + j] = 1;
+                } else {
+                    wg->current[i][j] = cell_create(NO);
                 }
 
-                if (step.x != -1) {
-                    wg->next[step.y][step.x] = shark;
-                    moved[step.y * wg->size + step.x] = 1;
+                if (new_co.x != -1) {
+                    wg->current[new_co.y][new_co.x] = shark;
+                    moved[new_co.y * size + new_co.x] = 1;
                 } else {
-                    if (!reproduced)
-                        wg->next[tmp.y][tmp.x] = shark; // ne bouge pas
+                    wg->current[i][j] = shark;
                 }
             }
 
-            free(libre);
+            /*----- CAS FISH ENSUITE -----*/
+            else if (wg->current[i][j].type == FISH) {
+                Coord new_co = {-1, -1};
+
+                for (int k = 0; k < 4; k++) {
+                    int d = (start + k) % 4;
+                    Coord voisin = {
+                        (j + dirs[d].x + size) % size,
+                        (i + dirs[d].y + size) % size
+                    };
+                    if (wg->current[voisin.y][voisin.x].type == NO) {
+                        new_co = voisin;
+                        break;
+                    }
+                }
+
+                if (new_co.x == -1) continue;
+
+                Cell fish = wg->current[i][j];
+                fish.age++;
+
+                if (fish.age >= F_BREED) {
+                    wg->current[i][j] = cell_create(FISH);
+                    fish.age = 0;
+                } else {
+                    wg->current[i][j] = cell_create(NO);
+                }
+
+                wg->current[new_co.y][new_co.x] = fish;
+                moved[new_co.y * size + new_co.x] = 1;
+            }
         }
     }
 
     free(moved);
-    wator_next(wg);
 }
-

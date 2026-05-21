@@ -1,0 +1,13 @@
+contraintes suivantes :
+    - 1/9 requins
+    - 3/9 poissons
+    - 5/9 rien
+au bout de la 1000eme genration ça s'arrêtent, grille de 500*500, j'ai lancé 30 run pour + d'exactitude.
+avec les define suivants
+#define F_BREED 3
+#define S_BREED 100
+#define STARVE 50
+
+Les résultats m'ont étonnés, j'ai relancé une simulation avec 3000 générations au lieu de 1000, car ça ne 
+s'était pas stabilisé
+

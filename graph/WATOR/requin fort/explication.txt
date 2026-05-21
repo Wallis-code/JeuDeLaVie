@@ -1,0 +1,10 @@
+contraintes suivantes :
+    - 1/9 requins
+    - 3/9 poissons
+    - 5/9 rien
+au bout de la 1000eme genration ça s'arrêtent, grille de 500*500, j'ai lancé 30 run pour + d'exactitude.
+avec les define suivants
+#define F_BREED 2
+#define S_BREED 20
+#define STARVE 8
+
