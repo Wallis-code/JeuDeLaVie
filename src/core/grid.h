@@ -4,6 +4,8 @@
 #define DEAD 0
 #define ALIVE 1
 
+#include "coord.h"
+
 /*
 
         x
@@ -29,13 +31,6 @@ typedef struct{
     int **next;
 }Grid;
 
-typedef struct{
-    int x;
-    int y;
-}Coord;
-
-int coord_getX(Coord c);
-int coord_getY(Coord c);
 
 Grid *grid_create(int x, int y);
 int grid_getX(Grid *g);

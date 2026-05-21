@@ -8,6 +8,8 @@
 #include "UI/input.h"
 #include "UI/ui.h"
 #include "UI/pattern.h"
+#include "core/coord.h"
+
 
 int main() {
 
@@ -181,9 +183,12 @@ int main() {
 
         // edition clic gauche maintenu
         // marche pas car les cellules passent dans les deux états trop vite
+        /*
         if (in.mouse_left && in.mouse_x < 1250 && win2 == NULL)
             render_editGrid(ren, g, in.mouse_x, in.mouse_y,
                             in.cam_x, in.cam_y, in.cell_size);
+
+        */
 
         // fenetre pattern
         if (in.win_model && win2 == NULL) {

@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 199309L
 
+#include "coord.h"
 #include "grid.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,8 +8,7 @@
 #include <assert.h>
 #include <time.h>
 
-int coord_getX(Coord c){return c.x;}
-int coord_getY(Coord c){return c.y;}
+
 
 Grid *grid_create(int x, int y)
 {

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "stdbool.h"
+#include "core/coord.h"
 
 
 void render_grid(SDL_Renderer *r, Grid *g, int cam_x, int cam_y, int cell_size) {
@@ -57,6 +58,28 @@ void render_editGrid(SDL_Renderer *r, Grid *g, int mx, int my,
                     grid_setAliveCurrent(g, c);
                 return;
             }
+        }
+    }
+}
+
+void render_wator(SDL_Renderer *r, WatorGrid *wg, int cam_x, int cam_y, int cell_size) {
+    for (int i = 0; i < wg->size; i++) {
+        for (int j = 0; j < wg->size; j++) {
+            SDL_Rect cell = {
+                cam_x + j * (cell_size + 1),
+                cam_y + i * (cell_size + 1),
+                cell_size,
+                cell_size
+            };
+            if (cell.x + cell_size < 0 || cell.x > 1250) continue;
+            if (cell.y + cell_size < 0 || cell.y > 1250) continue;
+
+            switch (wg->current[i][j].type) {
+                case FISH:  SDL_SetRenderDrawColor(r, 50, 200, 50,  255); break;
+                case SHARK: SDL_SetRenderDrawColor(r, 220, 50, 50, 255); break;
+                default:    SDL_SetRenderDrawColor(r, 0 , 0 , 0 , 255); break;
+            }
+            SDL_RenderFillRect(r, &cell);
         }
     }
 }

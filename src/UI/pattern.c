@@ -1,5 +1,7 @@
 #include "pattern.h"
 #include <stdlib.h>
+#include "core/coord.h"
+
 
 void draw_buttonPattern(SDL_Renderer *r, TTF_Font *font, ButtonPattern *btn) {
     // fond
