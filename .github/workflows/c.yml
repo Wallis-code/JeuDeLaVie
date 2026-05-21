@@ -17,4 +17,6 @@ jobs:
     - name: Lancer les tests
       run: ./tests/test_grid
     - name: make test_wator
+      run: make test_wator
+    - name: Lancer les tests de wator
       run: ./tests/test_wator
