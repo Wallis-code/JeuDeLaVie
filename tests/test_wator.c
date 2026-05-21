@@ -29,7 +29,7 @@ void test_wator_set_fish() {
 void test_wator_set_shark() {
     WatorGrid *wg = wator_create(10);
     wator_setShark(wg, ((Coord) {5,2}));
-    assert(get(wg,((Coord) {5,2})) == SHARK);
+    assert(wator_getCellType(wg,((Coord) {5,2})) == SHARK);
     assert(wg->current[2][5].age == 0);
     assert(wg->current[2][5].hunger == STARVE);
     wator_destroy(wg);
