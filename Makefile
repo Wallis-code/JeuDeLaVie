@@ -28,7 +28,7 @@ core: src/core/grid.c src/core/main.c
 
 test_grid: src/core/grid.c tests/test_grid.c
 	$(CC) -Wall -std=c99 -I src -o tests/test_grid \
-	src/core/grid.c tests/test_grid.c
+	src/core/grid.c tests/test_grid.c src/core/coord.c
 
 test_wator: src/core/wator/wator.c src/core/coord.c tests/test_wator.c
 	$(CC) -Wall -std=c99 -I src -o tests/test_wator \
