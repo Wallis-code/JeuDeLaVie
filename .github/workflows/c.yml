@@ -20,3 +20,7 @@ jobs:
       run: make test_wator
     - name: Lancer les tests de wator
       run: ./tests/test_wator
+    - name: make test_history
+      run: make test_history
+    - name: lancer les tests
+      run: ./tests/test_history

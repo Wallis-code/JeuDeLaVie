@@ -34,6 +34,10 @@ test_wator: src/core/wator/wator.c src/core/coord.c tests/test_wator.c
 	$(CC) -Wall -std=c99 -I src -o tests/test_wator \
 	src/core/wator/wator.c src/core/coord.c tests/test_wator.c
 
+test_history: src/core/grid.c src/core/history.c src/core/coord.c tests/test_history.c
+	$(CC) -Wall -std=c99 -I src -o tests/test_history \
+	src/core/grid.c src/core/history.c src/core/coord.c tests/test_history.c
+	
 analyse: src/core/grid.c src/core/analyse.c src/core/analyse_main.c \
          src/core/wator/wator.c src/core/coord.c
 	$(CC) -Wall -std=c99 -I src -o executable/JDLV_analyse \
