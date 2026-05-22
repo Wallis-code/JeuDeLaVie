@@ -5,7 +5,7 @@
 
 /*--------- je sais pas si j'ai le droit*/
 //pour init + rapidement
-static Grid* init(){
+static Grid* initTest(){
     Grid *g = grid_create(10,10);
     return g;
 } 
@@ -19,7 +19,7 @@ void test_history_create() {
 }
 
 void test_history_push_back() {
-    Grid *g = init();
+    Grid *g = initTest();
     History *h = history_create();
 
     // on met une cellule vivante
@@ -42,7 +42,7 @@ void test_history_push_back() {
 }
 
 void test_history_limit() {
-    Grid *g = init();
+    Grid *g = initTest();
     History *h = history_create();
 
     // on pousse 150 états
@@ -56,7 +56,7 @@ void test_history_limit() {
 }
 
 void test_history_back_vide() {
-    Grid *g = init();
+    Grid *g = initTest();
     History *h = history_create();
 
     
