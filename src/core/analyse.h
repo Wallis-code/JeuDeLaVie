@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 // une ligne du CSV
+//deprecated
 typedef struct {
     float density;
     int generation;

@@ -8,6 +8,6 @@ int main() {
     //c'est arbitraire, dans mes tests précédents, ça dépassait pas 450
    //analyse_run_all("simulation.csv", 500, 250, 100);
 
-    analyse_wator_run("Simu_wator.csv" , 10000 , 500 , 10);
+    analyse_wator_run("Simu_wator.csv" , 1500 , 200 , 10);
     return EXIT_SUCCESS;
 }

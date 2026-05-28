@@ -88,10 +88,10 @@ void analyse_run_all(const char *filename, int max_gen, int grid_size, int nb_ru
 static void wator_alea(WatorGrid *wg) {
     for (int i = 0; i < wg->size; i++) {
         for (int j = 0; j < wg->size; j++) {
-            int r = rand() % 10;
+            int r = rand() % 100;
             Coord c = {j, i};
-            if (r == 0) wator_setShark(wg, c);
-            else if (r <= 3) wator_setFish(wg, c);
+            if (r < 5)        wator_setShark(wg, c);  
+            else if (r < 30)  wator_setFish(wg, c);   
         }
     }
 }

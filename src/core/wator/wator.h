@@ -18,14 +18,14 @@ de beltoforion
 */
 #define F_BREED 3
 //idem pour le requin
-#define S_BREED 100
+#define S_BREED 20
 
 /*
 * La faim de base d'un requin
 * décrémente s'il mange pas
 * si 0 alors meurt
 */
-#define STARVE 50
+#define STARVE 10
 
 
 typedef enum { FISH , SHARK , NO} CellType;
